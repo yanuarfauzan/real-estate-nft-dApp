@@ -18,6 +18,8 @@ function App() {
   const [escrow, setEscrow] = useState(null);
   const [account, setAccount] = useState(null);
   const [homes, setHomes] = useState([]);
+  const [home, setHome] = useState({});
+  const [toggle, setToggle] = useState(false);
   const loadBlockchainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     setProvider(provider);
@@ -46,6 +48,11 @@ function App() {
     })
   }
 
+  const toggleProp = (home) => {
+    setHome(home);
+    toggle ? setToggle(false) : setToggle(true);
+  }
+
   useEffect(() => {
     loadBlockchainData()
   }, [])
@@ -61,7 +68,7 @@ function App() {
 
         <div className='cards'>
           {homes.map((home, index) => (
-            <div className='card' key={index}>
+            <div className='card' key={index} onClick={() => toggleProp(home)}>
               <div className='card__image'>
                 <img src={home.image} alt="Home" />
               </div>
@@ -79,6 +86,10 @@ function App() {
         </div>
 
       </div>
+
+      {toggle && (
+        <Home home={home} escrow={escrow} provider={provider} account={account} toggleProp={toggleProp}></Home>
+      )}
     </div>
   );
 }
