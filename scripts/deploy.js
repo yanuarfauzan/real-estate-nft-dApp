@@ -24,20 +24,26 @@ async function main() {
   console.log("RealEstate deployed to:", realestate.address);
   console.log('Minting 3 properties...');
 
-  for (let i = 0; i <= 3; i++) {
-    transaction = await realestate.connect(seller).mint(`/metadata/${i}.json`);
-    await transaction.wait();
-  }
+  transaction = await realestate.connect(seller).mint('http://ipfs.io/ipfs/QmbWPX8d5wdU4enXCSEwUb4Vv1Vs7e26mVAUg31hWEAJBs');
+  await transaction.wait();
+
+  transaction = await realestate.connect(seller).mint('http://ipfs.io/ipfs/QmQCjhFuG69TPdc4s7iJP1V8QGP1caubTTN5qLQ3fG5Fh2');
+  await transaction.wait();
+
+  transaction = await realestate.connect(seller).mint('http://ipfs.io/ipfs/QmXSUqJJNTd2FuWDfogQew3yMnZcJHq1GxukZ8Bnh7qrh2');
+  await transaction.wait();
+
 
   const Escrow = await ethers.getContractFactory("Escrow");
   escrow = await Escrow.deploy(realestate.address, seller.address, inspector.address, lender.address);
   await escrow.deployed();
 
   console.log("Escrow deployed to:", escrow.address);
-  for (let i = 0; i <= 3; i++) {
-    transaction = await realestate.connect(seller).approve(escrow.address, i + 1);
+  for (let i = 1; i <= 3; i++) {
+    transaction = await realestate.connect(seller).approve(escrow.address, i);
     await transaction.wait();
   }
+
 
   transaction = await escrow.connect(seller).list(1, buyer.address, tokens(20), tokens(10));
   await transaction.wait();
